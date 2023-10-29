@@ -1,6 +1,6 @@
 from typing import List
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
-from tools.prompts import STUFF_PROMPT
+from tools.prompts import STUFF_PROMPT, VN_STUFF_PROMPT
 from langchain.docstore.document import Document
 from tools.embedding import FolderIndex
 from pydantic import BaseModel
@@ -17,6 +17,7 @@ def query_folder(
         folder_index: FolderIndex,
         llm: BaseChatModel,
         return_all: bool = False,
+        is_vn=False
 ) -> AnswerWithSources:
     """Queries a folder index for an answer.
 
@@ -31,12 +32,18 @@ def query_folder(
     Returns:
         AnswerWithSources: The answer and the source documents.
     """
-
-    chain = load_qa_with_sources_chain(
-        llm=llm,
-        chain_type="stuff",
-        prompt=STUFF_PROMPT,
-    )
+    if is_vn:
+        chain = load_qa_with_sources_chain(
+            llm=llm,
+            chain_type="stuff",
+            prompt=VN_STUFF_PROMPT,
+        )
+    else:
+        chain = load_qa_with_sources_chain(
+            llm=llm,
+            chain_type="stuff",
+            prompt=STUFF_PROMPT,
+        )
 
     relevant_docs = folder_index.index.similarity_search(query, k=5)
 
