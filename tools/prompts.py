@@ -57,3 +57,18 @@ VN_STUFF_PROMPT = PromptTemplate(
 STUFF_PROMPT = PromptTemplate(
     template=template, input_variables=["summaries", "question"]
 )
+
+
+def build_template(question, relevant_text):
+    return f'''[INST] <<SYS>>
+You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature. If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
+<</SYS>>
+Here are all information that may be can help you to answer the question.
+{relevant_text}.
+Please use information above to awnser this question.
+{question}[/INST]
+note that:  - just anwser the question no need to greeting!
+            - Use only the provided documents and do not attempt to fabricate an answer.
+            
+==> Anwser:
+'''

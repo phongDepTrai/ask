@@ -72,3 +72,10 @@ def get_sources(answer: str, folder_index: FolderIndex) -> List[Document]:
             if doc.metadata["source"] in source_keys:
                 source_docs.append(doc)
     return source_docs
+
+
+def get_answer(prompt_template, model, tokenizer):
+    input_ids = tokenizer(prompt_template, return_tensors='pt').input_ids.cuda()
+    output = model.generate(inputs=input_ids, temperature=0.7, do_sample=True, top_p=0.95, top_k=40, max_new_tokens=512)
+    result = tokenizer.decode(output[0]).split("==> Anwser:")[1]
+    return result

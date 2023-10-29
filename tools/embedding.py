@@ -5,6 +5,8 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.embeddings.base import Embeddings
 from typing import List, Type
 from langchain.docstore.document import Document
+import faiss
+import numpy as np
 
 
 class FolderIndex:
@@ -69,3 +71,12 @@ def embed_files(
     return FolderIndex.from_files(
         files=files, embeddings=_embeddings, vector_store=_vector_store
     )
+
+def get_llama_index(chunks, d=5120):
+    index = faiss.IndexFlatIP(d)
+    embeddings = np.array(chunks['embeddings'])
+    norm = np.linalg.norm(embeddings)  # Calculate the L2 norm of the data
+    embeddings = embeddings / norm  # Normalize the data
+    index.add(embeddings)
+    raw_text = np.array(chunks['raw_text'])
+    return index, raw_text

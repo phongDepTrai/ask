@@ -1,7 +1,7 @@
 from io import BytesIO
 from typing import List, Any, Optional
 import re
-
+import pickle
 import docx2txt
 from langchain.docstore.document import Document
 import fitz
@@ -106,3 +106,8 @@ def read_file(file: BytesIO) -> File:
         return TxtFile.from_bytes(file)
     else:
         raise NotImplementedError(f"File type {file.name.split('.')[-1]} not supported")
+    
+def read_pkl_file(file_path):
+    with open(file_path, 'rb') as file:
+        data = pickle.load(file)
+    return data
